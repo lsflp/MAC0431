@@ -10,7 +10,7 @@
 
 #include "ppmio.h"
 
-int **readImage (char *archive) {
+int ***readImage (char *archive) {
 
     char c;
     int n, h, w, i, j, k;
@@ -21,42 +21,42 @@ int **readImage (char *archive) {
     
     /* Lendo o P3. */
     fscanf (in, "%c %d", &c, &n);
-    
+    fscanf (in, "%c", &c);
+
     /* Lendo as linhas de comentários. */
     fscanf (in, "%c", &c);
-    while (1) {
-        if (c == '#') {
-            do {
-                fscanf (in, "%c", &c);
-            }while (c != 'n')
-        }
-        else 
-            break; 
-    }
-    
+    do {
+        do {
+            fscanf (in, "%c", &c);
+        } while (c != '\n');
+        fscanf (in, "%c", &c);
+    } while (c == '#');    
+
+    n = ungetc (c, in);
+
     /* Lendo o tamanho da matriz. */
-    fscanf (in, "%d %d", &h, &w);
+    fscanf (in, "%d %d", &w, &h);
     
     /* Lendo o 255. */
     fscanf (in, "%d", &n);
-    
+
     /* Alocando a matriz. */
-    img = malloc (h * sizeof (int *));
+    img = malloc (w * sizeof (int *));
 
-    for (i = 0; i < h; i++)
-        img[i] = malloc (w * sizeof (int));
+    for (i = 0; i < w; i++)
+        img[i] = malloc (h * sizeof (int));
 
-    for (i = 0; i < h; i++) {
-        for (j = 0; j < w; j++) {
+    for (i = 0; i < w; i++) {
+        for (j = 0; j < h; j++) {
             img[i][j] = malloc (3 * sizeof (int));
         }
     }
 
     /* Lendo a imagem. */
-    for (i = 0; i < h; i++) {
-        for (j = 0; j < w; j++) {
+    for (i = 0; i < w; i++) {
+        for (j = 0; j < h; j++) {
             for (k = 0; k < 3; k++) {
-                fscanf (in, "%d", img[i][j][k]);
+                fscanf (in, "%d", &img[i][j][k]);
             }
         } 
     }
@@ -66,37 +66,33 @@ int **readImage (char *archive) {
     return img;
 }
 
-void writeImage (int ***img, char *archive) {
-    int h = sizeof(img);
-    int w = sizeof(img[0]);
+void writeImage (int ***img, int w, int h, char *archive) {
     int i, j, k;
-    FILE *out = fopen (archive, "w");
+    FILE *out;
+
+    out = fopen (archive, "w");
 
     fprintf(out, "P3\n");
-    fprintf(out, "# Imagem gerada pela física alternativa.");
-    fprintf(out, "%d %d\n255\n", h, w);
+    fprintf(out, "# Imagem gerada pela física alternativa.\n");
+    fprintf(out, "%d %d\n255\n", w, h);
 
-    for (i = 0; i < h; i++) {
-        for (j = 0; j < w; j++) {
+    for (i = 0; i < w; i++) {
+        for (j = 0; j < h; j++) {
             for (k = 0; k < 3; k++) {
                 fprintf(out, "%3d ", img[i][j][k]);
             }
-            fprintf(out, "   ");
+            fprintf(out, "\n");
         }
-        fprintf(out, "\n");
     }
 
     fclose (out);
 }
 
-void freeMatrix (int ***img) {
-    int h = sizeof(img);
-    int w = sizeof(img[0]);
-
+void freeImage (int ***img, int w, int h) {
     int i, j;
 
-    for (i = 0; i < h; i++) {
-        for (j = 0; j < w; j++) {
+    for (i = 0; i < w; i++) {
+        for (j = 0; j < h; j++) {
             free (img[i][j]);
         } 
     }
@@ -104,6 +100,43 @@ void freeMatrix (int ***img) {
     for (i = 0; i < h; i++)
         free(img[i]);
 
-    free (img);
+    free(img);
 }
 
+int *getSize (char *archive) {
+    
+    int *size = malloc (2 * sizeof (int));
+
+    char c;
+    int n, h, w, i, j, k;
+    int ***img;
+    FILE *in;
+
+    in = fopen(archive, "r");
+    
+    /* Lendo o P3. */
+    fscanf (in, "%c %d", &c, &n);
+    fscanf (in, "%c", &c);
+
+    /* Lendo as linhas de comentários. */
+    fscanf (in, "%c", &c);
+    do {
+        do {
+            fscanf (in, "%c", &c);
+        } while (c != '\n');
+        fscanf (in, "%c", &c);
+    } while (c == '#');    
+
+    n = ungetc (c, in);
+
+    /* Lendo o tamanho da matriz. */
+    fscanf (in, "%d %d", &size[0], &size[1]);
+
+    fclose (in);
+
+    return size;
+}
+
+int freeSize (int *size) {
+    free(size);
+}
