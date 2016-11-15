@@ -3,11 +3,10 @@
 
 int main () {
 	
-	int ***M, *size, i, j, k;
+	ppmimg M;
+	int i, j, k;
 	M = readImage ("img.ppm");
-	size = getSize ("img.ppm");
-	writeImage (M, size[0], size[1], "new.ppm");
-	freeImage (M, size[0], size[1]);
-	freeSize(size);
+	writeImage (M, "new.ppm");
+	freeImage (M);
 	return 0;
 }

@@ -14,22 +14,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct {
+    int ***img;
+    int w, h;
+} *ppmimg;
+
 /* Recebe o nome de um arquivo de imagem, efetua a leitura e devolve uma matriz
  * tridimensional referente à imagem. */
-int ***readImage (char *archive);
+ppmimg readImage (char *archive);
 
 /* A partir de uma matriz tridimensional que representa uma imagem, cria um 
  * arquivo .ppm e escreve a imagem nele. */ 
-void writeImage (int ***img, int w, int h, char *archive);
+void writeImage (ppmimg M, char *archive);
 
 /* Recebe uma matriz tridimensional e libera o espaço alocado para ela. */
-void freeImage (int ***img, int w, int h);
-
-/* Devolve um vetor de duas posições que representa o tamanho de uma imagem. 
- * A primeira posição é a largura e a segunda é a altura. */
-int *getSize (char *archive);
-
-/* Libera o espaço alocado pelo vetor do tamanho. */
-int freeSize (int *size);
+void freeImage (ppmimg M);
 
 #endif

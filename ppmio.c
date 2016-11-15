@@ -10,7 +10,7 @@
 
 #include "ppmio.h"
 
-int ***readImage (char *archive) {
+ppmimg readImage (char *archive) {
 
     char c;
     int n, h, w, i, j, k;
@@ -63,10 +63,16 @@ int ***readImage (char *archive) {
 
     fclose (in);
 
-    return img;
+    ppmimg M = malloc (sizeof (ppmimg));
+
+    M->img = img;
+    M->w = w;
+    M->h = h;
+
+    return M;
 }
 
-void writeImage (int ***img, int w, int h, char *archive) {
+void writeImage (ppmimg M, char *archive) {
     int i, j, k;
     FILE *out;
 
@@ -74,12 +80,12 @@ void writeImage (int ***img, int w, int h, char *archive) {
 
     fprintf(out, "P3\n");
     fprintf(out, "# Imagem gerada pela física alternativa.\n");
-    fprintf(out, "%d %d\n255\n", w, h);
+    fprintf(out, "%d %d\n255\n", M->w, M->h);
 
-    for (i = 0; i < w; i++) {
-        for (j = 0; j < h; j++) {
+    for (i = 0; i < M->w; i++) {
+        for (j = 0; j < M->h; j++) {
             for (k = 0; k < 3; k++) {
-                fprintf(out, "%3d ", img[i][j][k]);
+                fprintf(out, "%3d ", M->img[i][j][k]);
             }
             fprintf(out, "\n");
         }
@@ -88,55 +94,19 @@ void writeImage (int ***img, int w, int h, char *archive) {
     fclose (out);
 }
 
-void freeImage (int ***img, int w, int h) {
+void freeImage (ppmimg M) {
     int i, j;
 
-    for (i = 0; i < w; i++) {
-        for (j = 0; j < h; j++) {
-            free (img[i][j]);
+    for (i = 0; i < M->w; i++) {
+        for (j = 0; j < M->h; j++) {
+            free (M->img[i][j]);
         } 
     }
 
-    for (i = 0; i < h; i++)
-        free(img[i]);
+    for (i = 0; i < M->h; i++)
+        free(M->img[i]);
 
-    free(img);
-}
+    free(M->img);
 
-int *getSize (char *archive) {
-    
-    int *size = malloc (2 * sizeof (int));
-
-    char c;
-    int n, h, w, i, j, k;
-    int ***img;
-    FILE *in;
-
-    in = fopen(archive, "r");
-    
-    /* Lendo o P3. */
-    fscanf (in, "%c %d", &c, &n);
-    fscanf (in, "%c", &c);
-
-    /* Lendo as linhas de comentários. */
-    fscanf (in, "%c", &c);
-    do {
-        do {
-            fscanf (in, "%c", &c);
-        } while (c != '\n');
-        fscanf (in, "%c", &c);
-    } while (c == '#');    
-
-    n = ungetc (c, in);
-
-    /* Lendo o tamanho da matriz. */
-    fscanf (in, "%d %d", &size[0], &size[1]);
-
-    fclose (in);
-
-    return size;
-}
-
-int freeSize (int *size) {
-    free(size);
+    free(M);
 }
