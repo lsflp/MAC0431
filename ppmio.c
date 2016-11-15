@@ -13,8 +13,8 @@
 ppmimg readImage (char *archive) {
 
     char c;
-    int n, h, w, i, j, k;
-    int ***img;
+    int n, i, j, k;
+    ppmimg M = malloc (sizeof (ppmimg));
     FILE *in;
 
     in = fopen(archive, "r");
@@ -35,39 +35,33 @@ ppmimg readImage (char *archive) {
     n = ungetc (c, in);
 
     /* Lendo o tamanho da matriz. */
-    fscanf (in, "%d %d", &w, &h);
+    fscanf (in, "%d %d", &M->w, &M->h);
     
     /* Lendo o 255. */
     fscanf (in, "%d", &n);
 
     /* Alocando a matriz. */
-    img = malloc (w * sizeof (int *));
+    M->img = malloc (M->w * sizeof (int *));
 
-    for (i = 0; i < w; i++)
-        img[i] = malloc (h * sizeof (int));
+    for (i = 0; i < M->w; i++)
+        M->img[i] = malloc (M->h * sizeof (int));
 
-    for (i = 0; i < w; i++) {
-        for (j = 0; j < h; j++) {
-            img[i][j] = malloc (3 * sizeof (int));
+    for (i = 0; i < M->w; i++) {
+        for (j = 0; j < M->h; j++) {
+            M->img[i][j] = malloc (3 * sizeof (int));
         }
     }
 
     /* Lendo a imagem. */
-    for (i = 0; i < w; i++) {
-        for (j = 0; j < h; j++) {
+    for (i = 0; i < M->w; i++) {
+        for (j = 0; j < M->h; j++) {
             for (k = 0; k < 3; k++) {
-                fscanf (in, "%d", &img[i][j][k]);
+                fscanf (in, "%d", &M->img[i][j][k]);
             }
         } 
     }
 
     fclose (in);
-
-    ppmimg M = malloc (sizeof (ppmimg));
-
-    M->img = img;
-    M->w = w;
-    M->h = h;
 
     return M;
 }
@@ -99,11 +93,11 @@ void freeImage (ppmimg M) {
 
     for (i = 0; i < M->w; i++) {
         for (j = 0; j < M->h; j++) {
-            free (M->img[i][j]);
+            free(M->img[i][j]);
         } 
     }
 
-    for (i = 0; i < M->h; i++)
+    for (i = 0; i < M->w; i++)
         free(M->img[i]);
 
     free(M->img);
