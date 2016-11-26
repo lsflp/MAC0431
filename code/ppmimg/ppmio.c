@@ -4,7 +4,7 @@
  *         Luís Felipe de Melo Costa Silva                               9297961
  * 
  *  Arquivo:   ppmio.c
- *  Descrição: É a biblioteca para manipulação de arquivos .ppm .Possui funções 
+ *  Descrição: É a biblioteca para manipulação de arquivos .ppm. Possui funções 
  *             de leitura e escrita, por exemplo.
  ******************************************************************************/ 
 
