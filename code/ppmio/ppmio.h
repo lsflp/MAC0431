@@ -17,18 +17,18 @@
 typedef struct {
     int ***img;
     int w, h;
-} *ppmimg;
+} *ppmImg;
 
 /* Recebe o nome de um arquivo de imagem, efetua a leitura e devolve uma struct 
  * referente à imagem. */
-ppmimg readImage (char *archive);
+ppmImg readImage (char *archive);
 
 /* A partir de uma struct com uma matriz tridimensional que representa uma 
  * imagem, cria um arquivo .ppm e escreve a imagem nele. */ 
-void writeImage (ppmimg M, char *archive);
+void writeImage (ppmImg M, char *archive);
 
 /* Recebe uma struct com que representa a imagem e libera o espaço alocado para 
  * ela. */
-void freeImage (ppmimg M);
+void freeImage (ppmImg M);
 
 #endif

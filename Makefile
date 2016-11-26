@@ -3,19 +3,24 @@
 #         Luís Felipe de Melo Costa Silva                                9297961
 
 C = gcc
-CFLAGS = -Wall -ansi -Wno-unused-result -pedantic #-O2
+CFLAGS = -Wall -ansi -Wno-unused-result -pedantic 
 
 OBJ = projeto.o
 
-default: ppmimg.o projeto.o 
-	$(CC) $(CFLAGS) *.o -o projeto
+default: color.o ppmio.o projeto.o 
+	$(CC) $(CFLAGS) *.o -o projeto -lm
 
-projeto.o: codigo/projeto.c
+projeto.o: code/projeto.c
 	$(CC) $(CFLAGS) -ansi -c $^
 
-ppmimg.o: codigo/ppmio/ppmio.c codigo/ppmio/ppmio.h
+ppmio.o: code/ppmio/ppmio.c code/ppmio/ppmio.h
+	$(CC) $(CFLAGS) -ansi -c $^
+
+color.o: code/color/color.c code/color/color.h
 	$(CC) $(CFLAGS) -ansi -c $^
 
 clean:
 	$(RM) projeto
 	$(RM) *.o
+	$(RM) new.ppm
+	find . -name "*.gch" -type f -delete

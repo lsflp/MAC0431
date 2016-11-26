@@ -10,11 +10,11 @@
 
 #include "ppmio.h"
 
-ppmimg readImage (char *archive) {
+ppmImg readImage (char *archive) {
 
     char c;
     int n, i, j, k;
-    ppmimg M = malloc (sizeof (ppmimg));
+    ppmImg M = malloc (sizeof (ppmImg));
     FILE *in;
 
     in = fopen(archive, "r");
@@ -66,7 +66,7 @@ ppmimg readImage (char *archive) {
     return M;
 }
 
-void writeImage (ppmimg M, char *archive) {
+void writeImage (ppmImg M, char *archive) {
     int i, j, k;
     FILE *out;
 
@@ -88,7 +88,7 @@ void writeImage (ppmimg M, char *archive) {
     fclose (out);
 }
 
-void freeImage (ppmimg M) {
+void freeImage (ppmImg M) {
     int i, j;
 
     for (i = 0; i < M->w; i++) {
