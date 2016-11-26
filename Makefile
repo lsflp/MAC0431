@@ -13,7 +13,7 @@ default: ppmimg.o projeto.o
 projeto.o: codigo/projeto.c
 	$(CC) $(CFLAGS) -ansi -c $^
 
-ppmimg.o: codigo/ppmimg/ppmimg.c codigo/ppmimg/ppmimg.h
+ppmimg.o: codigo/ppmio/ppmio.c codigo/ppmio/ppmio.h
 	$(CC) $(CFLAGS) -ansi -c $^
 
 clean:
