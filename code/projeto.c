@@ -15,45 +15,38 @@
 
 int main (int argc, char **argv) {
     
-    /*ppmimg M;*/
-
-    int i, k;
-    colorVec c;
-    double j, angle, red = 0.703125, redx, blue = 0.171875, green = 0.3984375;
+    ppmImg M;
+    int i, j, k, l, iter, MAX_ITER;
 
     if (argc < 2) {
-        printf("Uso: ./projeto <ARQUIVO>\n");
+        printf("Uso: ./projeto <ARQUIVO> <SAÍDA> <MAX_ITER>\n");
         return EXIT_FAILURE;
     }
     
-    angle = getAngle (green);
-    printf("%f\n", angle);
-    c = getCoordinates (red, angle, 0);
-    printf("(%f, %f)\n", c->x, c->y);
-    free(c);
-    c = getCoordinates (blue, angle, 1);
-    printf("(%f, %f)\n", c->x, c->y);
-    free(c);
-    printf("%f\n", transfer (0.046875, red));
-    printf("%f\n", correct(1.2));
-    
-    /*M = readImage (argv[1]);
-    writeImage (M, "new.ppm");
-    freeImage (M); */
+    M = readImage (argv[1]);
+    MAX_ITER = atoi (argv[3]);
 
-    for (ticks = 0; ticks < MAX_TICKS; ticks++) {
-        /* percorre índices pares */
-        for (i = 0; i < /*tamanho horizontal da matriz*/; i+=2) {
-            for (j = 0; j < /*tamanho vertical da matriz*/; j+=2) {
-                sendColor(i, j, n);
+    for (iter = 0; iter < MAX_ITER; iter++) {
+        
+        /* Percorre índices com soma par */
+        for (i = 0; i < M->w; i+=2) {
+            for (j = 0; j < M->h; j+=2) {
+                /* Envia a cor para os pixels vizinhos. */
+                sendColor(M, i, j);
             }
         }
 
-        for (k = 1; k < /*tamanho horizontal da matriz*/; k+=2) {
-            for (l = 1; l < /*tamanho vertical da matriz*/; l+=2) {
-                sendColor(k, l, n);
+        /* Percorre índices com soma ímpar */
+        for (k = 1; k < M->w; k+=2) {
+            for (l = 1; l < M->h; l+=2) {
+                /* Envia a cor para os pixels vizinhos. */
+                sendColor(M, k, l);
             }
         }
     }
+
+    writeImage (M, argv[2]);
+    freeImage (M);
+
     return EXIT_SUCCESS;
 }

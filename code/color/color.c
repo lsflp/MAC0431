@@ -43,27 +43,30 @@ double correct (double color) {
     return excess/4;
 }
 
-int send (int neighbor, int color) {
+int send (int neighbor, double color) {
     double n;
     int result;
 
     n = normatize(neighbor);
     n = transfer(n, color);
     result = denormatize(n);
+
+    return result;
 }
 
-void sendColor (int i, int j, int n) {
-    int red_n, blue_n;
+void sendColor (ppmImg M, int i, int j) {
+    
+    colorVec vec_r, vec_b;
     double r, g, b;
     double angle;
-    colorVec r, b;
+    int red_n, blue_n, red, green, blue;
 
     vec_r = malloc (sizeof (colorVec));
     vec_b = malloc (sizeof (colorVec));
 
-    red = matrix[i][j][0];
-    green = matrix[i][j][1];
-    blue = matrix[i][j][2];
+    red = M->img[i][j][0];
+    green = M->img[i][j][1];
+    blue = M->img[i][j][2];
 
     /* normatizar cores */
     r = normatize(red);
@@ -74,41 +77,62 @@ void sendColor (int i, int j, int n) {
     vec_r = getCoordinates(r, angle, 0);
     vec_b = getCoordinates(b, angle, 1);
 
-    /* olhamos o vermelho */
-    if(vec_r->x < 0) { /* direita */
-        red_n = matrix[i+1][j][0];
-        matrix[i+1][j][0] = send(red_n, r);
+    /* Para a componente vermelha */
+
+    if(vec_r->x > 0) { /* Direita */
+        if (i+1 != (M->w)-1) {
+            red_n = M->img[i+1][j][0];
+            M->img[i+1][j][0] = send(red_n, vec_r->x);
+        }    
     }
-    else { /* esquerda */
-        red_n = matrix[i-1][j][0];
-        matrix[i-1][j][0] = send(red_n, r);
+    else { /* Esquerda */
+        if (i-1 != 0) {
+            red_n = M->img[i-1][j][0];
+            M->img[i-1][j][0] = send(red_n, vec_r->x);
+        }    
     }
 
-    if (vec_r->y < 0) { /* cima */
-        red_n = matrix[i][j+1][0];
-        matrix[i][j+1][0] = send(red_n, r);
+    if (vec_r->y > 0) { /* Baixo*/
+        if (j+1 != (M->h)-1) {
+            red_n = M->img[i][j+1][0];
+            M->img[i][j+1][0] = send(red_n, vec_r->y);
+        }    
     }
-    else { /* baixo */
-        red_n = matrix[i][j-1][0];
-        matrix[i][j-1][0] = send (red_n, r);
-    }
-
-    /* olhamos o azul */
-    if(vec_b->x > 0) { /* direita */
-        blue_n = matrix[i+1][j][2];
-        matrix[i+1][j][2] = send(blue_n, b);
-    }
-    else { /* esquerda */
-        blue_n = matrix[i-1][j][2];
-        matrix[i-1][j][2] = send(blue_n, b);
+    else { /* Cima */
+        if (j-1 != 0) {
+            red_n = M->img[i][j-1][0];
+            M->img[i][j-1][0] = send(red_n, vec_r->y);
+        }    
     }
 
-    if (vec_r->y > 0) { /*cima*/
-        blue_n = matrix[i][j+1][2];
-        matrix[i][j+1][2] = send(blue_n, b);
+    /* Para a componente azul */
+
+    if (vec_b->x < 0) { /* Direita */
+        if (i+1 != (M->w)-1) {
+            blue_n = M->img[i+1][j][2];
+            M->img[i+1][j][2] = send(blue_n, vec_b->x);
+        }    
     }
-    else {
-        blue_n = matrix[i][j-1][2];
-        matrix[i][j-1][2] = send(blue_n, b);
+    else { /* Esquerda */
+        if (i-1 != 0) {
+            blue_n = M->img[i-1][j][2];
+            M->img[i-1][j][2] = send(blue_n, vec_b->x);
+        }    
     }
+
+    if (vec_r->y < 0) { /* Baixo */
+        if (j+1 != (M->h)-1) {
+            blue_n = M->img[i][j+1][2];
+            M->img[i][j+1][2] = send(blue_n, vec_b->y); 
+        }  
+    }
+    else { /* Cima */
+        if (j-1 != 0) {
+            blue_n = M->img[i][j-1][2];
+            M->img[i][j-1][2] = send(blue_n, vec_b->y);
+        }
+    }
+
+    free(vec_r);
+    free(vec_b);
 }

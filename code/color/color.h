@@ -14,6 +14,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include "../ppmio/ppmio.h"
 
 #define PI 3.14159265
 
@@ -46,5 +47,14 @@ double transfer (double neighboor, double color);
 /* Caso um pixel exceda o valor 1, o excedente que será transferido para cada
    vizinho é devolvido por essa função. */
 double correct (double color);
+
+/* Dado um valor inteiro que representa uma componente de cor do vizinho e um 
+   valor real que representa uma componente de cor, devolvemos a interação entre
+   as componentes, de acordo com o enunciado.*/
+int send (int neighbor, double color);
+
+/* Dado um pixel (i, j) na matriz M->img, transferimos as cores para os 
+   vizinhos. */
+void sendColor (ppmImg M, int i, int j);
 
 #endif
