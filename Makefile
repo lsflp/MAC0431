@@ -22,5 +22,4 @@ color.o: code/color/color.c code/color/color.h
 clean:
 	$(RM) projeto
 	$(RM) *.o
-	$(RM) new.ppm
 	find . -name "*.gch" -type f -delete
