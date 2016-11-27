@@ -40,5 +40,20 @@ int main (int argc, char **argv) {
     /*M = readImage (argv[1]);
     writeImage (M, "new.ppm");
     freeImage (M); */
+
+    for (ticks = 0; ticks < MAX_TICKS; ticks++) {
+        /* percorre índices pares */
+        for (i = 0; i < /*tamanho horizontal da matriz*/; i+=2) {
+            for (j = 0; j < /*tamanho vertical da matriz*/; j+=2) {
+                sendColor(i, j, n);
+            }
+        }
+
+        for (k = 1; k < /*tamanho horizontal da matriz*/; k+=2) {
+            for (l = 1; l < /*tamanho vertical da matriz*/; l+=2) {
+                sendColor(k, l, n);
+            }
+        }
+    }
     return EXIT_SUCCESS;
 }

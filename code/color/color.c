@@ -42,3 +42,72 @@ double correct (double color) {
     double excess = color-1;
     return excess/4;
 }
+
+void sendColor (int i, int j, int n) {
+    int red_n, blue_n;
+    double r, g, b, rn, bn;
+    double angle;
+    colorVec r, b;
+
+    vec_r = malloc (sizeof (colorVec));
+    vec_b = malloc (sizeof (colorVec));
+
+    red = matrix[i][j][0];
+    green = matrix[i][j][1];
+    blue = matrix[i][j][2];
+
+    /* normatizar cores */
+    r = normatize(red);
+    g = normatize(green);
+    b = normatize(blue);
+
+    angle = getAngle(g);
+    vec_r = getCoordinates(r, angle, 0);
+    vec_b = getCoordinates(b, angle, 1);
+
+    /* olhamos o vermelho */
+    if(vec_r->x < 0) { /* direita */
+        red_n = matrix[i+1][j][0];
+        rn = normatize(red_n);
+        rn = transfer(rn, r);
+    }
+    else { /* esquerda */
+        red_n = matrix[i-1][j][0];
+        rn = normatize(red_n);
+        rn = transfer(rn, r);
+    }
+
+    if (vec_r->y < 0) { /*cima*/
+        red_n = matrix[i][j+1][0];
+        rn = normatize(red_n);
+        rn = transfer(rn, r);
+    }
+    else {
+        red_n = matrix[i][j-1][0];
+        rn = normatize(red_n);
+        rn = transfer(rn, r);
+    }
+
+    /* olhamos o azul */
+    if(vec_b->x > 0) { /* direita */
+        blue_n = matrix[i+1][j][2];
+        rb = normatize(blue_n);
+        rb = transfer(br, b);
+    }
+    else { /* esquerda */
+        blue_n = matrix[i-1][j][2];
+        rb = normatize(blue_n);
+        rb = transfer(br, b);
+    }
+
+    if (vec_r->y > 0) { /*cima*/
+        blue_n = matrix[i][j+1][2];
+        rb = normatize(blue_n);
+        rb = transfer(br, b);
+    }
+    else {
+        blue_n = matrix[i][j-1][2];
+        rb = normatize(blue_n);
+        rb = transfer(br, b);
+    }
+}
