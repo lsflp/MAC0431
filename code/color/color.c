@@ -34,8 +34,8 @@ colorVec getCoordinates (double color, double angle, int n) {
     return c;
 }
 
-double transfer (double neighboor, double color) {
-    return ((1-neighboor)*color)/4;
+double transfer (double neighbor, double color) {
+    return ((1-neighbor)*color)/4;
 }
 
 double correct (double color) {
@@ -43,9 +43,18 @@ double correct (double color) {
     return excess/4;
 }
 
+int send (int neighbor, int color) {
+    double n;
+    int result;
+
+    n = normatize(neighbor);
+    n = transfer(n, color);
+    result = denormatize(n);
+}
+
 void sendColor (int i, int j, int n) {
     int red_n, blue_n;
-    double r, g, b, rn, bn;
+    double r, g, b;
     double angle;
     colorVec r, b;
 
@@ -68,46 +77,38 @@ void sendColor (int i, int j, int n) {
     /* olhamos o vermelho */
     if(vec_r->x < 0) { /* direita */
         red_n = matrix[i+1][j][0];
-        rn = normatize(red_n);
-        rn = transfer(rn, r);
+        matrix[i+1][j][0] = send(red_n, r);
     }
     else { /* esquerda */
         red_n = matrix[i-1][j][0];
-        rn = normatize(red_n);
-        rn = transfer(rn, r);
+        matrix[i-1][j][0] = send(red_n, r);
     }
 
-    if (vec_r->y < 0) { /*cima*/
+    if (vec_r->y < 0) { /* cima */
         red_n = matrix[i][j+1][0];
-        rn = normatize(red_n);
-        rn = transfer(rn, r);
+        matrix[i][j+1][0] = send(red_n, r);
     }
-    else {
+    else { /* baixo */
         red_n = matrix[i][j-1][0];
-        rn = normatize(red_n);
-        rn = transfer(rn, r);
+        matrix[i][j-1][0] = send (red_n, r);
     }
 
     /* olhamos o azul */
     if(vec_b->x > 0) { /* direita */
         blue_n = matrix[i+1][j][2];
-        rb = normatize(blue_n);
-        rb = transfer(br, b);
+        matrix[i+1][j][2] = send(blue_n, b);
     }
     else { /* esquerda */
         blue_n = matrix[i-1][j][2];
-        rb = normatize(blue_n);
-        rb = transfer(br, b);
+        matrix[i-1][j][2] = send(blue_n, b);
     }
 
     if (vec_r->y > 0) { /*cima*/
         blue_n = matrix[i][j+1][2];
-        rb = normatize(blue_n);
-        rb = transfer(br, b);
+        matrix[i][j+1][2] = send(blue_n, b);
     }
     else {
         blue_n = matrix[i][j-1][2];
-        rb = normatize(blue_n);
-        rb = transfer(br, b);
+        matrix[i][j-1][2] = send(blue_n, b);
     }
 }
