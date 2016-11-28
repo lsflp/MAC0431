@@ -8,6 +8,6 @@ Compilação: Basta usar o arquivo Makefile anexado, da seguinte forma:
         $ make
 
 Execução: Para executar, rode o seguinte comando:
-        $ ./projeto <ARQUIVO> <SAIDA> <MAX_ITER>
+        $ ./projeto <ARQUIVO> <SAIDA> <MAX_ITER> <N_PROCS>
 
-        Onde ARQUIVO é uma imagem de entrada com formato PPM, SAIDA é o nome do arquivo .ppm de saída, e MAX_ITER é o número de iterações que o sistema vai rodar.
+        Onde ARQUIVO é uma imagem de entrada com formato PPM, SAIDA é o nome do arquivo .ppm de saída, MAX_ITER é o número de iterações que o sistema vai rodar e N_PROCS o número de threads.

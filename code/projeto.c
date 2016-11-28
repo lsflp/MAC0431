@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <omp.h>
+//#include <omp.h>
 #include "ppmio/ppmio.h"
 #include "color/color.h"
 
@@ -28,12 +28,11 @@ int main (int argc, char **argv) {
     MAX_ITER = atoi (argv[3]);
     N_PROCS = atoi(argv[4]);
 
-    omp_set_num_threads (N_PROCS);
+    //omp_set_num_threads (N_PROCS);
 
     for (iter = 0; iter < MAX_ITER; iter++) {
         
         /* Percorre índices com soma par */
-        #pragma omp parallel for shared(M)
         for (i = 0; i < M->h-1; i+=2) {
             for (j = 0; j < M->w-1; j+=2) {
                 /* Envia a cor para os pixels vizinhos. */
@@ -46,13 +45,13 @@ int main (int argc, char **argv) {
             if(j == M->w - 1) 
                 sendColor(M, i, j);
         }
-        if(i == M->h - 1) {
+
+        if(M->h % 2 == 0) {
             for(j = 0; j < M->w; j+= 2)
-                sendColor(M, i, j);
+                sendColor(M, M->h - 1, j);
         }
 
         /* Percorre índices com soma ímpar */
-        #pragma omp parallel for shared(M)
         for (i = 0; i < M->h-1; i+=2) {
             for (j = 1; j < M->w; j+=2) {
                 /* Envia a cor para os pixels vizinhos. */
@@ -63,9 +62,10 @@ int main (int argc, char **argv) {
             if(j == M->w) 
                 sendColor(M, i+1, j-1);
         }
-        if(i == M->h - 1) {
+
+        if(M->h % 2 == 0) {
             for(j = 1; j < M->w; j+= 2)
-                sendColor(M, i, j);
+                sendColor(M, M->h - 1, j);
         }
     }
 
