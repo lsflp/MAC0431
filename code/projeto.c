@@ -43,6 +43,24 @@ int main (int argc, char **argv) {
                 sendColor(M, k, l);
             }
         }
+
+        /* Percorre índices com soma par */
+        for (i = 0; i < M->w; i+=2) {
+            for (j = 0; j < M->h; j+=2) {
+                /* Corrige a cor, eventualmente enviando-a 
+                   para os pixels vizinhos. */
+                correctColor(M, i, j);
+            }
+        }
+
+        /* Percorre índices com soma ímpar */
+        for (k = 1; k < M->w; k+=2) {
+            for (l = 1; l < M->h; l+=2) {
+                /* Corrige a cor, eventualmente enviando-a 
+                   para os pixels vizinhos. */
+                correctColor(M, k, l);
+            }
+        }
     }
 
     writeImage (M, argv[2]);

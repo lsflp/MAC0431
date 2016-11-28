@@ -8,7 +8,7 @@
  ******************************************************************************/ 
 
 #include "color.h"
-
+ 
 double normatize (int color) {
     return (double) color/256;
 }
@@ -36,11 +36,6 @@ colorVec getCoordinates (double color, double angle, int n) {
 
 double transfer (double neighbor, double color) {
     return ((1-neighbor)*color)/4;
-}
-
-double correct (double color) {
-    double excess = color-1;
-    return excess/4;
 }
 
 int inBorder (ppmImg M, int i, int j) {
@@ -82,7 +77,7 @@ void sendColor (ppmImg M, int i, int j) {
     b = normatize(blue);
 
     angle = getAngle(g);
-    
+
     vec_r = getCoordinates(r, angle, 0);
     vec_b = getCoordinates(b, angle, 1);
 
@@ -143,4 +138,44 @@ void sendColor (ppmImg M, int i, int j) {
 
     free(vec_r);
     free(vec_b);
+}
+
+int exceed (int *pixel) {
+    int i;
+    for (i = 0; i < 3; i++)
+        if (pixel[i] > 255)
+            return i;
+    return -1;
+}
+
+double correct (double color) {
+    double excess = color-1;
+    return excess/4;
+}
+
+void correctColor (ppmImg M, int i, int j) {
+    int comp, new, dcorr;
+    double color, coor;
+
+    comp = exceed (M->img[i][j]);
+
+    if (comp == -1)
+        return;
+
+    color = normatize(M->img[i][j][comp]);
+    coor = correct (color);
+    dcorr = denormatize(coor);
+
+    if (!inBorder(M, i+1, j))
+        if ((new = M->img[i+1][j][comp]+dcorr) <= 255)
+            M->img[i+1][j][comp] = new;
+    if (!inBorder(M, i-1, j))
+        if ((new = M->img[i-1][j][comp]+dcorr) <= 255)
+            M->img[i-1][j][comp] = new;
+    if (!inBorder(M, i, j+1))
+        if ((new = M->img[i][j+1][comp]+dcorr) <= 255)
+            M->img[i][j+1][comp] = new;
+    if (!inBorder(M, i, j-1))
+        if ((new = M->img[i][j-1][comp]+dcorr) <= 255)
+            M->img[i][j-1][comp] = new;
 }

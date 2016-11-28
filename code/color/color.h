@@ -19,7 +19,7 @@
 #define PI 3.14159265
 
 typedef struct {
-	double x, y;
+   double x, y;
 } *colorVec;
 
 /* Recebe um inteiro entre 0 e 255 e retorna esse valor normatizado no intervalo
@@ -44,10 +44,6 @@ colorVec getCoordinates (double color, double angle, int n);
    intensidade (neighboor). */
 double transfer (double neighboor, double color);
 
-/* Caso um pixel exceda o valor 1, o excedente que será transferido para cada
-   vizinho é devolvido por essa função. */
-double correct (double color);
-
 /* Devolve 1 se a posição (i, j) está na borda de M->img ou 0, caso contrário.*/
 int inBorder (ppmImg M, int i, int j);
 
@@ -59,5 +55,18 @@ int send (int neighbor, double color);
 /* Dado um pixel (i, j) na matriz M->img, transferimos as cores para os 
    vizinhos. */
 void sendColor (ppmImg M, int i, int j);
+
+/* Devolve um número que representa a componente de cor que estourou 255. Caso
+   contrário, devolve -1. */
+int exceed (int *pixel);
+
+/* Caso um pixel exceda o valor 1, o excedente que será transferido para cada
+   vizinho é devolvido por essa função. */
+double correct (double color);
+
+/* Corrige a cor, caso a componente tenha sido excedida, transferindo para
+   os vizinhos somente se não for causar estouro. */
+void correctColor (ppmImg M, int i, int j);
+
 
 #endif
