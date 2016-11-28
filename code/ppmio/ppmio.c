@@ -41,10 +41,10 @@ ppmImg readImage (char *archive) {
     fscanf (in, "%d", &n);
 
     /* Alocando a matriz. */
-    M->img = malloc (M->w * sizeof (int *));
+    M->img = malloc (M->w * sizeof (int **));
 
     for (i = 0; i < M->w; i++)
-        M->img[i] = malloc (M->h * sizeof (int));
+        M->img[i] = malloc (M->h * sizeof (int *));
 
     for (i = 0; i < M->w; i++) {
         for (j = 0; j < M->h; j++) {

@@ -88,7 +88,7 @@ void sendColor (ppmImg M, int i, int j) {
     else { /* Esquerda */
         if (i-1 != 0) {
             red_n = M->img[i-1][j][0];
-            M->img[i-1][j][0] = send(red_n, vec_r->x);
+            M->img[i-1][j][0] = send(red_n, -vec_r->x);
         }    
     }
 
@@ -101,7 +101,7 @@ void sendColor (ppmImg M, int i, int j) {
     else { /* Cima */
         if (j-1 != 0) {
             red_n = M->img[i][j-1][0];
-            M->img[i][j-1][0] = send(red_n, vec_r->y);
+            M->img[i][j-1][0] = send(red_n, -vec_r->y);
         }    
     }
 
@@ -116,7 +116,7 @@ void sendColor (ppmImg M, int i, int j) {
     else { /* Esquerda */
         if (i-1 != 0) {
             blue_n = M->img[i-1][j][2];
-            M->img[i-1][j][2] = send(blue_n, vec_b->x);
+            M->img[i-1][j][2] = send(blue_n, -vec_b->x);
         }    
     }
 
@@ -129,7 +129,7 @@ void sendColor (ppmImg M, int i, int j) {
     else { /* Cima */
         if (j-1 != 0) {
             blue_n = M->img[i][j-1][2];
-            M->img[i][j-1][2] = send(blue_n, vec_b->y);
+            M->img[i][j-1][2] = send(blue_n, -vec_b->y);
         }
     }
 
