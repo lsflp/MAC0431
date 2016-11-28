@@ -51,9 +51,6 @@ int main (int argc, char **argv) {
             for(j = 0; j < M->w; j+= 2)
                 sendColor(M, M->h - 1, j);
         }
-    }
-
-    for (iter = 0; iter < MAX_ITER; iter++) {
 
         /* Percorre índices com soma ímpar */
         #pragma omp parallel for shared(M) private(i, j)
