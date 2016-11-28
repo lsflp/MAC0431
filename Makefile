@@ -2,8 +2,8 @@
 #         Isabela Blücher                                                9298170
 #         Luís Felipe de Melo Costa Silva                                9297961
 
-C = gcc
-CFLAGS = -Wall -ansi -Wno-unused-result -pedantic 
+CC = gcc
+CFLAGS = -Wall  -O3 -pedantic  -fopenmp
 
 OBJ = projeto.o
 

@@ -5,9 +5,9 @@ Nomes: Gustavo Henrique Faustino Silva                      Números USP: 929826
 ARQUIVO README
 
 Compilação: Basta usar o arquivo Makefile anexado, da seguinte forma:
-            $ make
+        $ make
 
-Execução: A seguinte linha deve ser utilizada:
-          $ ./projeto.c img.ppm
+Execução: Para executar, rode o seguinte comando:
+        $ ./projeto <ARQUIVO> <SAIDA> <MAX_ITER>
 
-          onde img.ppm é um arquivo de imagem PPM no formato P3.
+        Onde ARQUIVO é uma imagem de entrada com formato PPM, SAIDA é o nome do arquivo .ppm de saída, e MAX_ITER é o número de iterações que o sistema vai rodar.

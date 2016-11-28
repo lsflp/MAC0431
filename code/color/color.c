@@ -8,18 +8,6 @@
  ******************************************************************************/ 
 
 #include "color.h"
- 
-double normatize (int color) {
-    return (double) color/256;
-}
-
-int denormatize (double value) {
-    return (int) (value*256);
-}
-
-double getAngle (double green) {
-    return 2*PI*green;
-}
 
 colorVec getCoordinates (double color, double angle, int n) {
     colorVec c = malloc (sizeof (colorVec));
@@ -34,18 +22,6 @@ colorVec getCoordinates (double color, double angle, int n) {
     return c;
 }
 
-double transfer (double neighbor, double color) {
-    return ((1-neighbor)*color)/4;
-}
-
-int inBorder (ppmImg M, int i, int j) {
-    if (i <= 0 || i >= (M->w)-1)
-        return 1;
-    if (j <= 0 || j >= (M->h)-1)
-        return 1;
-    return 0;
-}
-
 int send (int neighbor, double color) {
     double n;
     int result;
@@ -53,9 +29,9 @@ int send (int neighbor, double color) {
     if (color < 0)
         color = -color;
 
-    n = normatize(neighbor);
-    n = transfer(n, color);
-    result = denormatize(n);
+    n = neighbor/256;
+    n = (1-n)*color/4;
+    result = (int) n*256;
 
     return result;
 }
@@ -72,11 +48,11 @@ void sendColor (ppmImg M, int i, int j) {
     blue = M->img[i][j][2];
 
     /* normatizar cores */
-    r = normatize(red);
-    g = normatize(green);
-    b = normatize(blue);
+    r = red/256;
+    g = green/256;
+    b = blue/256;
 
-    angle = getAngle(g);
+    angle = 2*PI*g;
 
     vec_r = getCoordinates(r, angle, 0);
     vec_b = getCoordinates(b, angle, 1);
@@ -84,25 +60,25 @@ void sendColor (ppmImg M, int i, int j) {
     /* Para a componente vermelha */
 
     if(vec_r->x > 0) { /* Direita */
-        if (!inBorder(M, i+1, j)) {
+        if(i + 1 < M->w - 1) {
             red_n = M->img[i+1][j][0];
             M->img[i+1][j][0] = send(red_n, vec_r->x);
-        }    
+        }
     }
     else { /* Esquerda */
-        if (!inBorder(M, i-1, j)) {
+        if (i - 1 > 0) {
             red_n = M->img[i-1][j][0];
             M->img[i-1][j][0] = send(red_n, -vec_r->x);
         }    
     }
     if (vec_r->y > 0) { /* Baixo*/
-        if (!inBorder(M, i, j+1)) {
+        if (j + 1 < M->h - 1) {
             red_n = M->img[i][j+1][0];
             M->img[i][j+1][0] = send(red_n, vec_r->y);
         }    
     }
     else { /* Cima */
-        if (!inBorder(M, i, j-1)) {
+        if (j - 1 > 0) {
             red_n = M->img[i][j-1][0];
             M->img[i][j-1][0] = send(red_n, -vec_r->y);
         }    
@@ -111,26 +87,26 @@ void sendColor (ppmImg M, int i, int j) {
     /* Para a componente azul */
 
     if (vec_b->x < 0) { /* Direita */
-        if (!inBorder(M, i+1, j)) {
+        if (i + 1 < M->w - 1) {
             blue_n = M->img[i+1][j][2];
             M->img[i+1][j][2] = send(blue_n, vec_b->x);
         }    
     }
     else { /* Esquerda */
-        if (!inBorder(M, i-1, j)) {
+        if (i - 1 > 0) {
             blue_n = M->img[i-1][j][2];
             M->img[i-1][j][2] = send(blue_n, vec_b->x);
         }    
     }
 
     if (vec_r->y < 0) { /* Baixo */
-        if (!inBorder(M, i, j+1)) {
+        if (j + 1 < M->h - 1) {
             blue_n = M->img[i][j+1][2];
             M->img[i][j+1][2] = send(blue_n, vec_b->y); 
         }  
     }
     else { /* Cima */
-        if (!inBorder(M, i, j-1)) {
+        if (j - 1 > 0) {
             blue_n = M->img[i][j-1][2];
             M->img[i][j-1][2] = send(blue_n, vec_b->y);
         }
@@ -140,42 +116,33 @@ void sendColor (ppmImg M, int i, int j) {
     free(vec_b);
 }
 
-int exceed (int *pixel) {
-    int i;
-    for (i = 0; i < 3; i++)
-        if (pixel[i] > 255)
-            return i;
-    return -1;
-}
-
-double correct (double color) {
-    double excess = color-1;
-    return excess/4;
-}
-
 void correctColor (ppmImg M, int i, int j) {
     int comp, new, dcorr;
     double color, coor;
 
-    comp = exceed (M->img[i][j]);
-
-    if (comp == -1)
+    if (M->img[i][j][0] > 255)
+        comp = 0;
+    else if(M->img[i][j][1] > 255)
+        comp = 0;
+    else if(M->img[i][j][2] > 255)
+        comp = 0;
+    else
         return;
 
-    color = normatize(M->img[i][j][comp]);
-    coor = correct (color);
-    dcorr = denormatize(coor);
+    color = M->img[i][j][comp]/256;
+    coor = (double) (color-1)/4;
+    dcorr = (int) coor*256;
 
-    if (!inBorder(M, i+1, j))
+    if (i + 1 < M->w - 1)
         if ((new = M->img[i+1][j][comp]+dcorr) <= 255)
             M->img[i+1][j][comp] = new;
-    if (!inBorder(M, i-1, j))
+    if (i - 1 > 0)
         if ((new = M->img[i-1][j][comp]+dcorr) <= 255)
             M->img[i-1][j][comp] = new;
-    if (!inBorder(M, i, j+1))
+    if (j + 1 < M->h - 1)
         if ((new = M->img[i][j+1][comp]+dcorr) <= 255)
             M->img[i][j+1][comp] = new;
-    if (!inBorder(M, i, j-1))
+    if (j - 1 > 0)
         if ((new = M->img[i][j-1][comp]+dcorr) <= 255)
             M->img[i][j-1][comp] = new;
 }
