@@ -60,7 +60,7 @@ void sendColor (ppmImg M, int i, int j) {
     /* Para a componente vermelha */
 
     if(vec_r->x > 0) { /* Direita */
-        if(i + 1 < M->w - 1) {
+        if(i + 1 < M->h - 1) {
             red_n = M->img[i+1][j][0];
             M->img[i+1][j][0] = send(red_n, vec_r->x);
         }
@@ -72,7 +72,7 @@ void sendColor (ppmImg M, int i, int j) {
         }    
     }
     if (vec_r->y > 0) { /* Baixo*/
-        if (j + 1 < M->h - 1) {
+        if (j + 1 < M->w - 1) {
             red_n = M->img[i][j+1][0];
             M->img[i][j+1][0] = send(red_n, vec_r->y);
         }    
@@ -87,7 +87,7 @@ void sendColor (ppmImg M, int i, int j) {
     /* Para a componente azul */
 
     if (vec_b->x < 0) { /* Direita */
-        if (i + 1 < M->w - 1) {
+        if (i + 1 < M->h - 1) {
             blue_n = M->img[i+1][j][2];
             M->img[i+1][j][2] = send(blue_n, vec_b->x);
         }    
@@ -100,7 +100,7 @@ void sendColor (ppmImg M, int i, int j) {
     }
 
     if (vec_r->y < 0) { /* Baixo */
-        if (j + 1 < M->h - 1) {
+        if (j + 1 < M->w - 1) {
             blue_n = M->img[i][j+1][2];
             M->img[i][j+1][2] = send(blue_n, vec_b->y); 
         }  
@@ -114,35 +114,4 @@ void sendColor (ppmImg M, int i, int j) {
 
     free(vec_r);
     free(vec_b);
-}
-
-void correctColor (ppmImg M, int i, int j) {
-    int comp, new, dcorr;
-    double color, coor;
-
-    if (M->img[i][j][0] > 255)
-        comp = 0;
-    else if(M->img[i][j][1] > 255)
-        comp = 1;
-    else if(M->img[i][j][2] > 255)
-        comp = 2;
-    else
-        return;
-
-    color = M->img[i][j][comp]/256;
-    coor = (double) (color-1)/4;
-    dcorr = (int) coor*256;
-
-    if (i + 1 < M->w - 1)
-        if ((new = M->img[i+1][j][comp]+dcorr) <= 255)
-            M->img[i+1][j][comp] = new;
-    if (i - 1 > 0)
-        if ((new = M->img[i-1][j][comp]+dcorr) <= 255)
-            M->img[i-1][j][comp] = new;
-    if (j + 1 < M->h - 1)
-        if ((new = M->img[i][j+1][comp]+dcorr) <= 255)
-            M->img[i][j+1][comp] = new;
-    if (j - 1 > 0)
-        if ((new = M->img[i][j-1][comp]+dcorr) <= 255)
-            M->img[i][j-1][comp] = new;
 }

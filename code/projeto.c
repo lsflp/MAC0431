@@ -10,14 +10,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <omp.h> 
+#include <omp.h>
 #include "ppmio/ppmio.h"
 #include "color/color.h"
 
 int main (int argc, char **argv) {
     
     ppmImg M;
-    int i, j, k, l, iter, MAX_ITER;
+    int i, j, iter, MAX_ITER;
 
     if (argc < 4) {
         printf("Uso: ./projeto <ARQUIVO> <SAIDA> <MAX_ITER>\n");
@@ -31,40 +31,38 @@ int main (int argc, char **argv) {
         
         /* Percorre índices com soma par */
         #pragma omp parallel for shared(M)
-        for (i = 0; i < M->w; i+=2) {
-            for (j = 0; j < M->h; j+=2) {
+        for (i = 0; i < M->h-1; i+=2) {
+            for (j = 0; j < M->w-1; j+=2) {
                 /* Envia a cor para os pixels vizinhos. */
                 sendColor(M, i, j);
+                sendColor(M, i+1, j+1);
             }
+
+            /* esse cara ficou de fora do for, pra evitar um if lá dentro
+               ao checar o acesso do cara na diagonal dele */
+            if(j == M->w - 1) 
+                sendColor(M, i, j);
+        }
+        if(i == M->h - 1) {
+            for(j = 0; j < M->w; j+= 2)
+                sendColor(M, i, j);
         }
 
         /* Percorre índices com soma ímpar */
         #pragma omp parallel for shared(M)
-        for (k = 1; k < M->w; k+=2) {
-            for (l = 1; l < M->h; l+=2) {
+        for (i = 0; i < M->h-1; i+=2) {
+            for (j = 1; j < M->w; j+=2) {
                 /* Envia a cor para os pixels vizinhos. */
-                sendColor(M, k, l);
+                sendColor(M, i, j);
+                sendColor(M, i+1, j-1);
             }
-        }
 
-        /* Percorre índices com soma par */
-        #pragma omp parallel for shared(M)
-        for (i = 0; i < M->w; i+=2) {
-            for (j = 0; j < M->h; j+=2) {
-                /* Corrige a cor, eventualmente enviando-a 
-                   para os pixels vizinhos. */
-                correctColor(M, i, j);
-            }
+            if(j == M->w) 
+                sendColor(M, i+1, j-1);
         }
-
-        /* Percorre índices com soma ímpar */
-        #pragma omp parallel for shared(M)
-        for (k = 1; k < M->w; k+=2) {
-            for (l = 1; l < M->h; l+=2) {
-                /* Corrige a cor, eventualmente enviando-a 
-                   para os pixels vizinhos. */
-                correctColor(M, k, l);
-            }
+        if(i == M->h - 1) {
+            for(j = 1; j < M->w; j+= 2)
+                sendColor(M, i, j);
         }
     }
 
