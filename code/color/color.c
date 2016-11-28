@@ -43,9 +43,20 @@ double correct (double color) {
     return excess/4;
 }
 
+int inBorder (ppmImg M, int i, int j) {
+    if (i <= 0 || i >= (M->w)-1)
+        return 1;
+    if (j <= 0 || j >= (M->h)-1)
+        return 1;
+    return 0;
+}
+
 int send (int neighbor, double color) {
     double n;
     int result;
+
+    if (color < 0)
+        color = -color;
 
     n = normatize(neighbor);
     n = transfer(n, color);
@@ -61,9 +72,6 @@ void sendColor (ppmImg M, int i, int j) {
     double angle;
     int red_n, blue_n, red, green, blue;
 
-    vec_r = malloc (sizeof (colorVec));
-    vec_b = malloc (sizeof (colorVec));
-
     red = M->img[i][j][0];
     green = M->img[i][j][1];
     blue = M->img[i][j][2];
@@ -74,32 +82,35 @@ void sendColor (ppmImg M, int i, int j) {
     b = normatize(blue);
 
     angle = getAngle(g);
+
+    vec_r = malloc (sizeof (colorVec));
+    vec_b = malloc (sizeof (colorVec));
+
     vec_r = getCoordinates(r, angle, 0);
     vec_b = getCoordinates(b, angle, 1);
 
     /* Para a componente vermelha */
 
     if(vec_r->x > 0) { /* Direita */
-        if (i+1 != (M->w)-1) {
+        if (!inBorder(M, i+1, j)) {
             red_n = M->img[i+1][j][0];
             M->img[i+1][j][0] = send(red_n, vec_r->x);
         }    
     }
     else { /* Esquerda */
-        if (i-1 != 0) {
+        if (!inBorder(M, i-1, j)) {
             red_n = M->img[i-1][j][0];
             M->img[i-1][j][0] = send(red_n, -vec_r->x);
         }    
     }
-
     if (vec_r->y > 0) { /* Baixo*/
-        if (j+1 != (M->h)-1) {
+        if (!inBorder(M, i, j+1)) {
             red_n = M->img[i][j+1][0];
             M->img[i][j+1][0] = send(red_n, vec_r->y);
         }    
     }
     else { /* Cima */
-        if (j-1 != 0) {
+        if (!inBorder(M, i, j-1)) {
             red_n = M->img[i][j-1][0];
             M->img[i][j-1][0] = send(red_n, -vec_r->y);
         }    
@@ -108,28 +119,28 @@ void sendColor (ppmImg M, int i, int j) {
     /* Para a componente azul */
 
     if (vec_b->x < 0) { /* Direita */
-        if (i+1 != (M->w)-1) {
+        if (!inBorder(M, i+1, j)) {
             blue_n = M->img[i+1][j][2];
             M->img[i+1][j][2] = send(blue_n, vec_b->x);
         }    
     }
     else { /* Esquerda */
-        if (i-1 != 0) {
+        if (!inBorder(M, i-1, j)) {
             blue_n = M->img[i-1][j][2];
-            M->img[i-1][j][2] = send(blue_n, -vec_b->x);
+            M->img[i-1][j][2] = send(blue_n, vec_b->x);
         }    
     }
 
     if (vec_r->y < 0) { /* Baixo */
-        if (j+1 != (M->h)-1) {
+        if (!inBorder(M, i, j+1)) {
             blue_n = M->img[i][j+1][2];
             M->img[i][j+1][2] = send(blue_n, vec_b->y); 
         }  
     }
     else { /* Cima */
-        if (j-1 != 0) {
+        if (!inBorder(M, i, j-1)) {
             blue_n = M->img[i][j-1][2];
-            M->img[i][j-1][2] = send(blue_n, -vec_b->y);
+            M->img[i][j-1][2] = send(blue_n, vec_b->y);
         }
     }
 

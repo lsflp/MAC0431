@@ -48,6 +48,9 @@ double transfer (double neighboor, double color);
    vizinho é devolvido por essa função. */
 double correct (double color);
 
+/* Devolve 1 se a posição (i, j) está na borda de M->img ou 0, caso contrário.*/
+int inBorder (ppmImg M, int i, int j);
+
 /* Dado um valor inteiro que representa uma componente de cor do vizinho e um 
    valor real que representa uma componente de cor, devolvemos a interação entre
    as componentes, de acordo com o enunciado.*/
