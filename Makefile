@@ -3,7 +3,7 @@
 #         Luís Felipe de Melo Costa Silva                                9297961
 
 CC = gcc
-CFLAGS = -Wall  -O3 -Ofast -pedantic 
+CFLAGS = -Wall  -O3 -Ofast -pedantic -fopenmp
 
 OBJ = projeto.o
 

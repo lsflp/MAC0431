@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-//#include <omp.h>
+#include <omp.h>
 #include "ppmio/ppmio.h"
 #include "color/color.h"
 
@@ -28,8 +28,9 @@ int main (int argc, char **argv) {
     MAX_ITER = atoi (argv[3]);
     N_PROCS = atoi(argv[4]);
 
-    //omp_set_num_threads (N_PROCS);
+    omp_set_num_threads (N_PROCS);
 
+    #pragma omp parallel for shared(M)
     for (iter = 0; iter < MAX_ITER; iter++) {
         
         /* Percorre índices com soma par */
@@ -50,6 +51,10 @@ int main (int argc, char **argv) {
             for(j = 0; j < M->w; j+= 2)
                 sendColor(M, M->h - 1, j);
         }
+    }
+
+    #pragma omp parallel for shared(M)
+    for (iter = 0; iter < MAX_ITER; iter++) {
 
         /* Percorre índices com soma ímpar */
         for (i = 0; i < M->h-1; i+=2) {
