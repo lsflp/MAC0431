@@ -68,5 +68,4 @@ double correct (double color);
    os vizinhos somente se não for causar estouro. */
 void correctColor (ppmImg M, int i, int j);
 
-
 #endif
