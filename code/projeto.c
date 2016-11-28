@@ -17,15 +17,18 @@
 int main (int argc, char **argv) {
     
     ppmImg M;
-    int i, j, iter, MAX_ITER;
+    int i, j, iter, MAX_ITER, N_PROCS;
 
-    if (argc < 4) {
-        printf("Uso: ./projeto <ARQUIVO> <SAIDA> <MAX_ITER>\n");
+    if (argc < 5) {
+        printf("Uso: ./projeto <ARQUIVO> <SAIDA> <MAX_ITER> <N_PROCS>\n");
         return EXIT_FAILURE;
     }
     
     M = readImage (argv[1]);
     MAX_ITER = atoi (argv[3]);
+    N_PROCS = atoi(argv[4]);
+
+    omp_set_num_threads (N_PROCS);
 
     for (iter = 0; iter < MAX_ITER; iter++) {
         
