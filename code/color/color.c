@@ -29,7 +29,7 @@ int send (int neighbor, double color) {
     if (color < 0)
         color = -color;
 
-    n = neighbor/256;
+    n = (double) neighbor/256;
     n = (1-n)*color/4;
     result = (int) n*256;
 
