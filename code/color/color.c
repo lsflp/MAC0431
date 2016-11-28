@@ -123,9 +123,9 @@ void correctColor (ppmImg M, int i, int j) {
     if (M->img[i][j][0] > 255)
         comp = 0;
     else if(M->img[i][j][1] > 255)
-        comp = 0;
+        comp = 1;
     else if(M->img[i][j][2] > 255)
-        comp = 0;
+        comp = 2;
     else
         return;
 
