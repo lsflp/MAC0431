@@ -82,10 +82,7 @@ void sendColor (ppmImg M, int i, int j) {
     b = normatize(blue);
 
     angle = getAngle(g);
-
-    vec_r = malloc (sizeof (colorVec));
-    vec_b = malloc (sizeof (colorVec));
-
+    
     vec_r = getCoordinates(r, angle, 0);
     vec_b = getCoordinates(b, angle, 1);
 
