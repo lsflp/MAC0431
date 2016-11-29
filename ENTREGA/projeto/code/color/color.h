@@ -16,7 +16,7 @@
 #include <math.h>
 #include "../ppmio/ppmio.h"
 
-#define PI 3.14159265
+#define DOISPI 6.2831853
 
 typedef struct {
    double x, y;

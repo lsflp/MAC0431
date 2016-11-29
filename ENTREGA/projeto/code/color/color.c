@@ -24,7 +24,7 @@ int send (int neighbor, double color) {
         color = -color;
 
     n = (double) neighbor/256;
-    n = n + ((double) (1-n)*color)/4;
+    n = ((double) (1-n)*color)/4;
     result = (int) (n*256);
     
     return result;
@@ -34,19 +34,15 @@ void sendColor (ppmImg M, int i, int j) {
     
     colorVec vec_r, vec_b;
     double r, g, b;
-    double angle;
-    int red_n, blue_n, red, green, blue;
-
-    red = M->img[i][j][0];
-    green = M->img[i][j][1];
-    blue = M->img[i][j][2];
+    double angle, newAngle, transfer;
+    int red_n, blue_n;
 
     /* normatizar cores */
-    r = (double) red/256;
-    g = (double) green/256;
-    b = (double) blue/256;
+    r = (double) M->img[i][j][0]/256;
+    g = (double) M->img[i][j][1]/256;
+    b = (double) M->img[i][j][2]/256;
 
-    angle = 2*PI*g;
+    angle = DOISPI*g;
 
     vec_r = getCoordinates(r, angle);
     vec_b = getCoordinates(b, angle);
@@ -56,25 +52,33 @@ void sendColor (ppmImg M, int i, int j) {
     if(vec_r->x > 0) { /* Direita */
         if(i + 1 < M->h - 1) {
             red_n = M->img[i+1][j][0];
-            M->img[i+1][j][0] = send(red_n, vec_r->x);
+            transfer = send(red_n, vec_r->x);
+            M->img[i+1][j][0] += transfer;
+            if (i < M->h - 1) M->img[i][j][0] -= transfer;
         }
     }
     else { /* Esquerda */
         if (i - 1 > 0) {
             red_n = M->img[i-1][j][0];
-            M->img[i-1][j][0] = send(red_n, vec_r->x);
+            transfer = send(red_n, vec_r->x);
+            M->img[i-1][j][0] += transfer;
+            if (i > 0) M->img[i][j][0] -= transfer;
         }    
     }
     if (vec_r->y > 0) { /* Baixo*/
         if (j + 1 < M->w - 1) {
             red_n = M->img[i][j+1][0];
-            M->img[i][j+1][0] = send(red_n, vec_r->y);
+            transfer = send(red_n, vec_r->y);
+            M->img[i][j+1][0] += transfer;
+            if (j < M->w - 1) M->img[i][j][0] -= transfer;
         }    
     }
     else { /* Cima */
         if (j - 1 > 0) {
             red_n = M->img[i][j-1][0];
-            M->img[i][j-1][0] = send(red_n, vec_r->y);
+            transfer = send(red_n, vec_r->y);
+            M->img[i][j-1][0] += transfer;
+            if (j > 0) M->img[i][j][0] -= transfer;
         }    
     }
 
@@ -83,27 +87,47 @@ void sendColor (ppmImg M, int i, int j) {
     if (vec_b->x < 0) { /* Direita */
         if (i + 1 < M->h - 1) {
             blue_n = M->img[i+1][j][2];
-            M->img[i+1][j][2] = send(blue_n, -vec_b->x);
+            transfer = send(blue_n, -vec_b->x);
+            M->img[i+1][j][2] += transfer;
+            if (i < M->h - 1) M->img[i][j][2] -= transfer;
         }    
     }
     else { /* Esquerda */
         if (i - 1 > 0) {
             blue_n = M->img[i-1][j][2];
-            M->img[i-1][j][2] = send(blue_n, -vec_b->x);
+            transfer = send(blue_n, -vec_b->x);
+            M->img[i-1][j][2] += transfer;
+            if (i > 0) M->img[i][j][2] -= transfer;
         }    
     }
 
     if (vec_r->y < 0) { /* Baixo */
         if (j + 1 < M->w - 1) {
             blue_n = M->img[i][j+1][2];
-            M->img[i][j+1][2] = send(blue_n, -vec_b->y); 
+            transfer = send(blue_n, -vec_b->y);
+            M->img[i][j+1][2] += transfer;
+            if (j < M->w - 1) M->img[i][j][2] -= transfer; 
         }  
     }
     else { /* Cima */
         if (j - 1 > 0) {
             blue_n = M->img[i][j-1][2];
-            M->img[i][j-1][2] = send(blue_n, -vec_b->y);
+            transfer = send(blue_n, -vec_b->y);
+            M->img[i][j-1][2] += transfer;
+            if (j > 0) M->img[i][j][2] -= transfer;
         }
+    }
+
+    /* Atualizando o verde. */
+    if (i > 0 && j > 0 && i < M->h - 1 && j < M->w - 1) {
+        newAngle = atan2 ((double) M->img[i][j][0], (double) M->img[i][j][2]);
+        angle += newAngle;
+        /* Para não estourar. */
+        while (angle > DOISPI)
+            angle -= DOISPI;
+        angle /= DOISPI;
+        M->img[i][j][1] = (int) (angle*256);
+
     }
 
     free(vec_r);
