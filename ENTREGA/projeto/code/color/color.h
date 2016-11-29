@@ -23,10 +23,8 @@ typedef struct {
 } *colorVec;
 
 /* Dados a intensidade da cor e o ângulo determinado pela cor verde, devolve as 
-   coordenadas x e y do vetor que color representa. Precisa de um número que 
-   representa a cor (0 para R e 1 para B). Depois de seu uso, deve-se liberar
-   o ponteiro associado ao valor da devolução. */
-colorVec getCoordinates (double color, double angle, int n);
+   coordenadas x e y do vetor que color representa. */
+colorVec getCoordinates (double color, double angle);
 
 /* Dado um valor inteiro que representa uma componente de cor do vizinho e um 
    valor real que representa uma componente de cor, devolvemos a interação entre

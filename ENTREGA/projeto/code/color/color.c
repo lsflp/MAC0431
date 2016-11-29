@@ -9,16 +9,10 @@
 
 #include "color.h"
 
-colorVec getCoordinates (double color, double angle, int n) {
-    colorVec c = malloc (sizeof (colorVec));
-    if (n) {
-        c->x = -color*sin(angle);
-        c->y = -color*cos(angle);
-    }
-    else {
-        c->x = color*sin(angle);
-        c->y = color*cos(angle); 
-    }        
+colorVec getCoordinates (double color, double angle) {
+    colorVec c = malloc (sizeof(colorVec));    
+    c->x = color*sin(angle);
+    c->y = color*cos(angle);      
     return c;
 }
 
@@ -30,9 +24,9 @@ int send (int neighbor, double color) {
         color = -color;
 
     n = (double) neighbor/256;
-    n = (1-n)*color/4;
-    result = (int) n*256;
-
+    n = n + ((double) (1-n)*color)/4;
+    result = (int) (n*256);
+    
     return result;
 }
 
@@ -48,14 +42,14 @@ void sendColor (ppmImg M, int i, int j) {
     blue = M->img[i][j][2];
 
     /* normatizar cores */
-    r = red/256;
-    g = green/256;
-    b = blue/256;
+    r = (double) red/256;
+    g = (double) green/256;
+    b = (double) blue/256;
 
     angle = 2*PI*g;
 
-    vec_r = getCoordinates(r, angle, 0);
-    vec_b = getCoordinates(b, angle, 1);
+    vec_r = getCoordinates(r, angle);
+    vec_b = getCoordinates(b, angle);
 
     /* Para a componente vermelha */
 
@@ -68,7 +62,7 @@ void sendColor (ppmImg M, int i, int j) {
     else { /* Esquerda */
         if (i - 1 > 0) {
             red_n = M->img[i-1][j][0];
-            M->img[i-1][j][0] = send(red_n, -vec_r->x);
+            M->img[i-1][j][0] = send(red_n, vec_r->x);
         }    
     }
     if (vec_r->y > 0) { /* Baixo*/
@@ -80,7 +74,7 @@ void sendColor (ppmImg M, int i, int j) {
     else { /* Cima */
         if (j - 1 > 0) {
             red_n = M->img[i][j-1][0];
-            M->img[i][j-1][0] = send(red_n, -vec_r->y);
+            M->img[i][j-1][0] = send(red_n, vec_r->y);
         }    
     }
 
@@ -89,26 +83,26 @@ void sendColor (ppmImg M, int i, int j) {
     if (vec_b->x < 0) { /* Direita */
         if (i + 1 < M->h - 1) {
             blue_n = M->img[i+1][j][2];
-            M->img[i+1][j][2] = send(blue_n, vec_b->x);
+            M->img[i+1][j][2] = send(blue_n, -vec_b->x);
         }    
     }
     else { /* Esquerda */
         if (i - 1 > 0) {
             blue_n = M->img[i-1][j][2];
-            M->img[i-1][j][2] = send(blue_n, vec_b->x);
+            M->img[i-1][j][2] = send(blue_n, -vec_b->x);
         }    
     }
 
     if (vec_r->y < 0) { /* Baixo */
         if (j + 1 < M->w - 1) {
             blue_n = M->img[i][j+1][2];
-            M->img[i][j+1][2] = send(blue_n, vec_b->y); 
+            M->img[i][j+1][2] = send(blue_n, -vec_b->y); 
         }  
     }
     else { /* Cima */
         if (j - 1 > 0) {
             blue_n = M->img[i][j-1][2];
-            M->img[i][j-1][2] = send(blue_n, vec_b->y);
+            M->img[i][j-1][2] = send(blue_n, -vec_b->y);
         }
     }
 
