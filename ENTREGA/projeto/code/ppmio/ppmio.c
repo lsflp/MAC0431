@@ -41,20 +41,20 @@ ppmImg readImage (char *archive) {
     fscanf (in, "%d", &n);
 
     /* Alocando a matriz. */
-    M->img = malloc (M->w * sizeof (int **));
+    M->img = malloc (M->h * sizeof (int **));
 
-    for (i = 0; i < M->w; i++)
-        M->img[i] = malloc (M->h * sizeof (int *));
+    for (i = 0; i < M->h; i++)
+        M->img[i] = malloc (M->w * sizeof (int *));
 
-    for (i = 0; i < M->w; i++) {
-        for (j = 0; j < M->h; j++) {
+    for (i = 0; i < M->h; i++) {
+        for (j = 0; j < M->w; j++) {
             M->img[i][j] = malloc (3 * sizeof (int));
         }
     }
 
     /* Lendo a imagem. */
-    for (i = 0; i < M->w; i++) {
-        for (j = 0; j < M->h; j++) {
+    for (i = 0; i < M->h; i++) {
+        for (j = 0; j < M->w; j++) {
             for (k = 0; k < 3; k++) {
                 fscanf (in, "%d", &M->img[i][j][k]);
             }
@@ -76,8 +76,8 @@ void writeImage (ppmImg M, char *archive) {
     fprintf(out, "# Imagem gerada pela física alternativa.\n");
     fprintf(out, "%d %d\n255\n", M->w, M->h);
 
-    for (i = 0; i < M->w; i++) {
-        for (j = 0; j < M->h; j++) {
+    for (i = 0; i < M->h; i++) {
+        for (j = 0; j < M->w; j++) {
             for (k = 0; k < 3; k++) {
                 fprintf(out, "%3d ", M->img[i][j][k]);
             }
@@ -91,13 +91,13 @@ void writeImage (ppmImg M, char *archive) {
 void freeImage (ppmImg M) {
     int i, j;
 
-    for (i = 0; i < M->w; i++) {
-        for (j = 0; j < M->h; j++) {
+    for (i = 0; i < M->h; i++) {
+        for (j = 0; j < M->w; j++) {
             free(M->img[i][j]);
         } 
     }
 
-    for (i = 0; i < M->w; i++)
+    for (i = 0; i < M->h; i++)
         free(M->img[i]);
 
     free(M->img);
