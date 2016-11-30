@@ -19,10 +19,8 @@ ppmImg readImage (char *archive) {
 
     in = fopen(archive, "r");
     
-    /* Lendo o P3 (ou P6). */
+    /* Lendo o P3. */
     fscanf (in, "%c %d", &c, &n);
-    if (n == 3) type = 0;
-    else type = 1;
     fscanf (in, "%c", &c);
 
     /* Lendo as linhas de comentários. */
