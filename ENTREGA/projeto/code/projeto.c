@@ -33,7 +33,7 @@ int main (int argc, char **argv) {
     for (iter = 0; iter < MAX_ITER; iter++) {
         
         /* Percorre índices com soma par */
-        /*#pragma omp parallel for shared(M) private(i, j) */
+        #pragma omp parallel for shared(M) private(i, j) 
         for (i = 0; i < M->h-1; i+=2) {
             for (j = 0; j < M->w-1; j+=2) {
                 /* Envia a cor para os pixels vizinhos. */
@@ -53,7 +53,7 @@ int main (int argc, char **argv) {
         }
             
         /* Percorre índices com soma ímpar */
-        /*#pragma omp parallel for shared(M) private(i, j) */
+        #pragma omp parallel for shared(M) private(i, j)
         for (i = 0; i < M->h-1; i+=2) {
             for (j = 1; j < M->w; j+=2) {
                 /* Envia a cor para os pixels vizinhos. */
