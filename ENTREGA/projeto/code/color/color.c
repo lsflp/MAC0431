@@ -127,7 +127,6 @@ void sendColor (ppmImg M, int i, int j) {
             angle -= DOISPI;
         angle /= DOISPI;
         M->img[i][j][1] = (int) (angle*256);
-
     }
 
     free(vec_r);

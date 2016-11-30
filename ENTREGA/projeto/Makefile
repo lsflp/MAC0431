@@ -8,7 +8,7 @@ CFLAGS = -Wall  -O3 -Ofast -pedantic -fopenmp
 OBJ = projeto.o
 
 default: color.o ppmio.o projeto.o 
-	$(CC) $(CFLAGS) *.o -o projeto -lm
+	$(CC) $(CFLAGS) *.o -o projeto -lm -g
 
 projeto.o: code/projeto.c
 	$(CC) $(CFLAGS) -ansi -c $^
